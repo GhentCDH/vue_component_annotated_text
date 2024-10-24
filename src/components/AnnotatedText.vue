@@ -1,7 +1,17 @@
 <template>
   <div
     v-if="linesUtil.annotatedLines.value.length"
-    :class="componentClasses"
+    :class="[
+      'annotated-text',
+      `theme-${theme}`,
+      `annotated-text--render-${render}`,
+      {
+        'annotation--right-to-left': rightToLeft,
+        'annotated-text--show-labels': showLabels,
+        'action--active': updateState.action,
+      },
+      updateState.action ? `action--${action}` : '',
+    ]"
     @mouseleave="onMouseLeave($event)"
     @mouseup="onMouseUp($event)"
   >
@@ -75,6 +85,7 @@ let props = withDefaults(defineProps<AnnotatedTextProps>(), {
   autoAnnotationWeights: true,
   allowEdit: false,
   allowCreate: false,
+  righToLeft: false,
   style: () => ({
     defaultClass: "annotation",
     activeClass: "annotation--active",
@@ -122,7 +133,6 @@ const hasDoubleClickHandler = hasCustomEventListener("annotationDoubleClick");
 // Init util to handle css classes
 const cssClassUtil = new CssClassesUtil(props, updateState.value);
 const annotationClasses = cssClassUtil.annotationClasses;
-const componentClasses = cssClassUtil.componentClasses;
 
 /* user state event */
 watch(userStateLabel, (nv, ov) => {

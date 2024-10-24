@@ -62,4 +62,9 @@ export interface AnnotatedTextProps {
    * Whether to allow creating new annotations
    */
   allowCreate?: boolean;
+  /**
+   * The text is from right to left, f.e. for arabic texts
+   * Default: false
+   */
+  rightToLeft?: boolean;
 }
