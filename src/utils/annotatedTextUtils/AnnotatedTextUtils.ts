@@ -1,16 +1,11 @@
-import { computed } from "vue";
-import { componentClasses } from "./AnnotatedTextUtils/component.classes";
 import { annotationClasses } from "./AnnotatedTextUtils/annotation.classes";
 import type { UpdateAnnotationState } from "../../state";
-import type { AnnotationInternal } from "../../types/Annotation";
-import type { AnnotationStyle, RenderType } from "../../types/AnnotatedText";
+import type {
+  AnnotationInternal,
+  AnnotationStyle,
+} from "../../types/Annotation";
 
 export type CssClassUtilProps = {
-  theme?: string;
-  /**
-   * @deprecated
-   */
-  render?: RenderType;
   /**
    * Object to define classes for styles.
    */
@@ -38,17 +33,11 @@ export class CssClassesUtil<P extends CssClassUtilProps> {
     this.editAnnotationState = editingAnnotation;
   }
 
-  componentClasses = computed((): any[] => {
-    const { theme, render, showLabels } = this.props;
-    const { action } = this.editAnnotationState;
-    return componentClasses(theme, render, showLabels, action);
-  });
-
   annotationClasses = (
     annotation: AnnotationInternal,
     start: number,
     end: number,
-    allowCreate: boolean
+    allowCreate: boolean,
   ): string[] => {
     const { style, selectedAnnotations, hoveredAnnotations } = this.props;
 
@@ -60,7 +49,7 @@ export class CssClassesUtil<P extends CssClassUtilProps> {
       end,
       allowCreate,
       selectedAnnotations,
-      hoveredAnnotations
+      hoveredAnnotations,
     );
   };
 }

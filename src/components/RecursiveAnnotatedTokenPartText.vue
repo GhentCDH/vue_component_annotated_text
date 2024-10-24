@@ -81,7 +81,7 @@ const props = withDefaults(
   {
     annotations: () => [],
     annotationClassHandler: () => [],
-  }
+  },
 );
 
 const annotation = computed(() => props.annotations[0]);
@@ -93,7 +93,7 @@ const emit = defineEmits<RecursiveAnnotatedTokenPartTextEmits>();
 const click = (
   event: MouseEventPayload,
   wordPartStart: number,
-  action?: ActionType
+  action?: ActionType,
 ) => {
   onClick(event, {
     startOffset: wordPartStart,
@@ -105,7 +105,7 @@ const click = (
 const dblClick = (
   event: MouseEventPayload,
   wordPartStart: number,
-  action?: ActionType
+  action?: ActionType,
 ) => {
   onDoubleClick(event, {
     startOffset: wordPartStart,

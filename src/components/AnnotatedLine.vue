@@ -22,10 +22,10 @@
               annotation,
               wordPart.start,
               wordPart.end,
-              props.allowCreate
+              props.allowCreate,
             )
           "
-          :style="props.annotationStyle(annotation.color)"
+          :style="annotationStyle(annotation.color)"
           @mousedown="mouseDown($event, wordPart, annotation, 'move')"
           @mousemove="mouseMove($event, wordPart, annotation)"
           @dblclick="doubleClick($event, wordPart, annotation)"
@@ -75,18 +75,18 @@ import TextOnly from "./text/TextOnly.vue";
 import type { Annotation, AnnotationInternal } from "../types/Annotation";
 import type { ActionType, WordPart } from "../types/AnnotatedText";
 import { annotationStyle } from "../utils/annotatedTextUtils/AnnotatedTextUtils/annotation.style";
+import { annotationClasses } from "../utils/annotatedTextUtils/AnnotatedTextUtils/annotation.classes";
 import type { AnnotatedLineEmits, AnnotatedLineProps } from "@/types/props";
 
 const props = withDefaults(defineProps<AnnotatedLineProps>(), {
   render: "nested",
-  annotationClasses: () => [],
 });
 
 const renderNested = computed(() => props.render === "nested");
 const renderFlat = computed(() => props.render === "flat");
 
 function sortAnnotations(
-  annotations: AnnotationInternal[]
+  annotations: AnnotationInternal[],
 ): AnnotationInternal[] {
   return annotations.sort((a, b) => b.weight - a.weight);
 }
@@ -97,7 +97,7 @@ const mouseDown = (
   event: MouseEvent,
   wordPart: WordPart,
   annotation?: Annotation,
-  action?: ActionType
+  action?: ActionType,
 ) => {
   onClick(event, {
     startOffset: wordPart?.start,
@@ -110,7 +110,7 @@ const doubleClick = (
   event: MouseEvent,
   wordPart: WordPart,
   annotation?: Annotation,
-  action?: ActionType
+  action?: ActionType,
 ) => {
   onDoubleClick(event, {
     startOffset: wordPart?.start,
@@ -122,7 +122,7 @@ const doubleClick = (
 const mouseMove = (
   event: MouseEvent,
   wordPart: WordPart,
-  annotation: Annotation
+  annotation: Annotation,
 ) => {
   onMove(event, {
     startOffset: wordPart?.start,
