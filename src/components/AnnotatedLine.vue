@@ -75,11 +75,11 @@ import TextOnly from "./text/TextOnly.vue";
 import type { Annotation, AnnotationInternal } from "../types/Annotation";
 import type { ActionType, WordPart } from "../types/AnnotatedText";
 import { annotationStyle } from "../utils/annotatedTextUtils/AnnotatedTextUtils/annotation.style";
+import { annotationClasses } from "../utils/annotatedTextUtils/AnnotatedTextUtils/annotation.classes";
 import type { AnnotatedLineEmits, AnnotatedLineProps } from "@/types/props";
 
 const props = withDefaults(defineProps<AnnotatedLineProps>(), {
   render: "nested",
-  annotationClasses: () => [],
 });
 
 const renderNested = computed(() => props.render === "nested");

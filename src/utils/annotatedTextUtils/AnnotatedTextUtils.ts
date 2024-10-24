@@ -1,14 +1,11 @@
 import { annotationClasses } from "./AnnotatedTextUtils/annotation.classes";
 import type { UpdateAnnotationState } from "../../state";
-import type { AnnotationInternal } from "../../types/Annotation";
-import type { RenderType } from "../../types/AnnotatedText";
+import type {
+  AnnotationInternal,
+  AnnotationStyle,
+} from "../../types/Annotation";
 
 export type CssClassUtilProps = {
-  theme?: string;
-  /**
-   * @deprecated
-   */
-  render?: RenderType;
   /**
    * Object to define classes for styles.
    */
