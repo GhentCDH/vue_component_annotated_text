@@ -9,7 +9,7 @@
         'annotated-text--show-labels': showLabels,
         'action--active': updateState.action,
       },
-      updateState.action ? `action--${action}` : '',
+      updateState.action ? `action--${updateState.action}` : '',
     ]"
     @mouseleave="onMouseLeave($event)"
     @mouseup="onMouseUp($event)"

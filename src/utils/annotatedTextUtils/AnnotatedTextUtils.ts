@@ -1,7 +1,7 @@
 import { annotationClasses } from "./AnnotatedTextUtils/annotation.classes";
 import type { UpdateAnnotationState } from "../../state";
 import type { AnnotationInternal } from "../../types/Annotation";
-import type { AnnotationStyle, RenderType } from "../../types/AnnotatedText";
+import type { RenderType } from "../../types/AnnotatedText";
 
 export type CssClassUtilProps = {
   theme?: string;
