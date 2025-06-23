@@ -11,6 +11,7 @@ import { Line } from "../types/AnnotatedText";
 export const createAnnotationModel = (
   config: Partial<AnnotationConfig>,
   lines: Line[],
+  markdown = false,
 ): TextAnnotationModel => {
   const textLines: TextLine[] = [];
   // const gutters: Record<number, AnnotatedGutter> = {};
@@ -24,5 +25,6 @@ export const createAnnotationModel = (
   return new TextAnnotationModelImpl(
     merge(cloneDeep(DefaultConfig), config),
     textLines,
+    markdown,
   );
 };

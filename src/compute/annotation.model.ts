@@ -57,6 +57,7 @@ export type TextLine = Line & {
 };
 
 export interface TextAnnotationModel {
+  markdown: boolean;
   /**
    * If blockevents is true some events are blocked like editing or creating
    */
@@ -129,6 +130,7 @@ export class TextAnnotationModelImpl implements TextAnnotationModel {
   constructor(
     public readonly config: AnnotationConfig,
     public readonly lines: TextLine[],
+    public readonly markdown = false,
   ) {
     this.resetAnnotations();
   }

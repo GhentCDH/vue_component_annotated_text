@@ -8,7 +8,10 @@ import { styles } from "./styles.const";
 import { AnnotationConfig } from "./model/annotation.config";
 import { IdCollection } from "./model/id.collection";
 import { SvgModel } from "./model/svg.types";
-import { splitTextInLines } from "./utils/split-text-in-lines";
+import {
+  splitMarkdownInLines,
+  splitTextInLines,
+} from "./utils/split-text-in-lines";
 import { Line } from "../types/AnnotatedText";
 import { Annotation } from "../types/Annotation";
 import { Debugger } from "../utils/debugger";
@@ -39,9 +42,17 @@ export class ComputeAnnotations {
     this.setLines(splitTextInLines(text), redraw);
   }
 
-  public setLines(lines: Line[], redraw = true): void {
+  public setMarkdown(text: string, redraw = true): void {
+    this.setLines(splitMarkdownInLines(text), redraw, true);
+  }
+
+  public setLines(lines: Line[], redraw = true, markdown = false): void {
     this.lines = lines;
-    this.textAnnotationModel = createAnnotationModel(this.config, lines);
+    this.textAnnotationModel = createAnnotationModel(
+      this.config,
+      lines,
+      markdown,
+    );
     this.setAnnotations(this.annotations ?? [], redraw);
   }
 

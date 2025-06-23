@@ -24,6 +24,23 @@ const calculateLinePadding = memoize(
   },
 );
 
+const createTextLineContent = (text: string, markdown: boolean) => {
+  if (!markdown) return text;
+
+  let html = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // Convert bold (**text**)
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+  // Convert italic (*text*)
+  html = html.replace(/\*(?!\*)(.+?)\*/g, "<em>$1</em>");
+
+  return html;
+};
+
 const createText = (
   textLine: TextLine,
   textAnnotationModel: TextAnnotationModel,
@@ -41,7 +58,10 @@ const createText = (
   textDiv.style.setProperty("--line-height", `${lineHeight}px`);
 
   textDiv.className = `${styles.line.text.wrapper} ${text.rtl ? "rtl" : ""}`;
-  textDiv.innerText = `${textLine.text}`;
+  textDiv.innerHTML = createTextLineContent(
+    textLine.text,
+    textAnnotationModel.markdown,
+  );
   textDiv.setAttribute("data-line-uid", textLine.uuid);
   textDiv.setAttribute("data-annotation-role", "line");
 

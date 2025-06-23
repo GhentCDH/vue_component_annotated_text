@@ -21,3 +21,25 @@ export const splitTextInLines = (text: string): TextLine[] => {
 
   return result;
 };
+
+export const splitMarkdownInLines = (text: string): TextLine[] => {
+  const lines = text.split(/\n\s*\n/);
+  let start = 0;
+
+  const result = lines.map((text, index) => {
+    // Add additional 1 because the \n symbol consist of 2 characters
+    const end = start + text.length + 1;
+    const line = {
+      start,
+      end,
+      id: `line-${index}`,
+      text,
+    };
+
+    start = end;
+
+    return line;
+  });
+
+  return result;
+};
