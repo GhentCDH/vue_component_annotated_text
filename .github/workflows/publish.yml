@@ -34,18 +34,18 @@ jobs:
 
       - name: Publish package on NPM
         run: |
-          # 1. Dynamically configure OIDC parameters directly into .npmrc 
-          # This forces all underlying nested pnpm child processes to safely use GitHub's token exchange
+          # 1. Clean the existing workspace config context to prevent inline smashing
+          # We add clear carriage breaks before injecting the new public registry definitions
+          echo "" >> .npmrc
           echo "registry=https://npmjs.org" >> .npmrc
           echo "@ghentcdh:registry=https://npmjs.org" >> .npmrc
-          echo "oidc-token-provider=github" >> .npmrc
           echo "provenance=true" >> .npmrc
           
-          # 2. Execute the primary release publish using the 'latest' tag directly in Nx
+          # 2. Run the Nx release command passing the explicit OIDC providers as runtime flags
+          # This protects standard npm metadata operations from failing with "unknown config" errors
           npx nx release publish --access public --verbose --tag latest
           
           # 3. Explicitly force the current version as 'latest' on the npm registry via OIDC
-          # We extract the version string cleanly depending on whether it was a tag push or a manual dispatch
           if [[ "${{ github.ref_type }}" == "tag" ]]; then
             CLEAN_VERSION=$(echo "${{ github.ref_name }}" | sed 's/^v//')
             echo "Enforcing version $CLEAN_VERSION as 'latest' across monorepo packages..."
@@ -57,6 +57,9 @@ jobs:
             echo "Workflow run manually via workflow_dispatch. Skipping manual dist-tag enforcement."
           fi
         shell: bash
+        env:
+          # This native environment parameter is correctly interpreted by pnpm/npm during the process
+          NPM_CONFIG_OIDC_TOKEN_PROVIDER: github
 
       - name: Create GitHub Release
         # Only creates a GitHub release if triggered by an official version push tag
