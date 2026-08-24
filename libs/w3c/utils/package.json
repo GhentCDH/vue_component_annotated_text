@@ -29,6 +29,7 @@
     "lib/**"
   ],
   "publishConfig": {
+    "registry": "https://npmjs.org",
     "access": "public"
   },
   "sideEffects": false,

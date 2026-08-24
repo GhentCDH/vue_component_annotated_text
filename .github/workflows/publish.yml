@@ -34,18 +34,10 @@ jobs:
 
       - name: Publish package on NPM
         run: |
-          # 1. Clean the existing workspace config context to prevent inline smashing
-          # We add clear carriage breaks before injecting the new public registry definitions
-          echo "" >> .npmrc
-          echo "registry=https://npmjs.org" >> .npmrc
-          echo "@ghentcdh:registry=https://npmjs.org" >> .npmrc
-          echo "provenance=true" >> .npmrc
-          
-          # 2. Run the Nx release command passing the explicit OIDC providers as runtime flags
-          # This protects standard npm metadata operations from failing with "unknown config" errors
+          # 1. Execute the primary release publish using Nx
           npx nx release publish --access public --verbose --tag latest
           
-          # 3. Explicitly force the current version as 'latest' on the npm registry via OIDC
+          # 2. Force the current version as 'latest' on the npm registry via OIDC
           if [[ "${{ github.ref_type }}" == "tag" ]]; then
             CLEAN_VERSION=$(echo "${{ github.ref_name }}" | sed 's/^v//')
             echo "Enforcing version $CLEAN_VERSION as 'latest' across monorepo packages..."
@@ -58,8 +50,10 @@ jobs:
           fi
         shell: bash
         env:
-          # This native environment parameter is correctly interpreted by pnpm/npm during the process
+          # Tells pnpm/npm to fetch the token from GitHub Actions
           NPM_CONFIG_OIDC_TOKEN_PROVIDER: github
+          NPM_CONFIG_PROVENANCE: true
+
 
       - name: Create GitHub Release
         # Only creates a GitHub release if triggered by an official version push tag
