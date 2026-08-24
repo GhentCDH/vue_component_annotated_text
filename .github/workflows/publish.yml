@@ -20,10 +20,12 @@ jobs:
         uses: actions/checkout@v7
 
       - uses: ./.github/actions/use-cache
+
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
           cache: 'pnpm'
+
       - name: Install dependencies
         run: pnpm install
 
@@ -31,18 +33,34 @@ jobs:
         run: npx nx build core --production && npx nx build w3c-utils && npx nx build markdown
 
       - name: Publish package on NPM
-        run: npx nx release publish --access public --verbose
+        run: |
+          # 1. Dynamically configure OIDC parameters directly into .npmrc 
+          # This forces all underlying nested pnpm child processes to safely use GitHub's token exchange
+          echo "registry=https://npmjs.org" >> .npmrc
+          echo "@ghentcdh:registry=https://npmjs.org" >> .npmrc
+          echo "oidc-token-provider=github" >> .npmrc
+          echo "provenance=true" >> .npmrc
+          
+          # 2. Execute the primary release publish using the 'latest' tag directly in Nx
+          npx nx release publish --access public --verbose --tag latest
+          
+          # 3. Explicitly force the current version as 'latest' on the npm registry via OIDC
+          # We extract the version string cleanly depending on whether it was a tag push or a manual dispatch
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            CLEAN_VERSION=$(echo "${{ github.ref_name }}" | sed 's/^v//')
+            echo "Enforcing version $CLEAN_VERSION as 'latest' across monorepo packages..."
+          
+            pnpm npm dist-tag add @ghentcdh/core@$CLEAN_VERSION latest
+            pnpm npm dist-tag add @ghentcdh/w3c-utils@$CLEAN_VERSION latest
+            pnpm npm dist-tag add @ghentcdh/markdown@$CLEAN_VERSION latest
+          else
+            echo "Workflow run manually via workflow_dispatch. Skipping manual dist-tag enforcement."
+          fi
         shell: bash
-        env:
-          #          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          #          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          #          NPM_CONFIG_PROVENANCE: true
-          NPM_CONFIG_OIDC_TOKEN_PROVIDER: github
-          NPM_CONFIG_PROVENANCE: true
-          NPM_CONFIG_REGISTRY: https://registry.npmjs.org/
-          NPM_CONFIG_@ghentcdh:registry: https://registry.npmjs.org/
 
       - name: Create GitHub Release
+        # Only creates a GitHub release if triggered by an official version push tag
+        if: github.ref_type == 'tag'
         run: gh release create ${{ github.ref_name }} --title "${{ github.ref_name }}" --notes-file RELEASE_NOTES.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
